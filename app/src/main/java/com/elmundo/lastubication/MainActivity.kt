@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -67,7 +68,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        fusedLocationClient?.requestLocationUpdates(locationRequest as LocationRequest,callback as LocationCallback, null!!)
+        fusedLocationClient?.requestLocationUpdates(
+            locationRequest as LocationRequest,
+            callback!!, Looper.myLooper()!!
+        )
     }
 
     private fun pedirPermisos() {
@@ -107,6 +111,11 @@ class MainActivity : AppCompatActivity() {
     }
     }
 
+    private fun detenerActualizacionUbicacion() {
+        fusedLocationClient?.removeLocationUpdates(callback)
+
+
+    }
     override fun onStart() {
         super.onStart()
         if (validarPermisosUbicacion()) {
@@ -114,5 +123,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             pedirPermisos()
         }
+    }
+    override fun onPause() {
+        super.onPause()
+        detenerActualizacionUbicacion()
     }
 }
