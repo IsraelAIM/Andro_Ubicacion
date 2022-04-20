@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     var locationRequest:LocationRequest?=null
 
+    var callback:LocationCallback?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity() {
          }
 
      })*/
-        val callback= object: LocationCallback(){
+        callback= object: LocationCallback(){
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 for(ubicacion in locationResult?.locations!!){
@@ -70,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
         fusedLocationClient?.requestLocationUpdates(
             locationRequest as LocationRequest,
-            callback!!, Looper.myLooper()!!
+            callback as LocationCallback, Looper.myLooper()!!
         )
     }
 
@@ -112,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun detenerActualizacionUbicacion() {
-        fusedLocationClient?.removeLocationUpdates(callback)
+        callback?.let { fusedLocationClient?.removeLocationUpdates(it) }
 
 
     }
